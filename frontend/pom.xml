@@ -16,4 +16,55 @@
         <maven.compiler.target>11</maven.compiler.target>
     </properties>
 
+    <!--when deploying the project, it would be easier for us to build the whole project with one command, since we are using Maven as the Build Tool, let’s configure our frontend module to build also the Angular project using Maven. In this way, we can bundle the backend and frontend modules into a single JAR.-->
+    <build>
+        <resources>
+            <resource>
+                <!--where the result of build will be stored:-->
+                <directory>dist/META-INF/resources</directory>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>1.12.0</version>
+                <configuration>
+                    <nodeVersion>v14.17.3</nodeVersion>
+                    <nodeDownloadRoot>https://nodejs.org/dist/</nodeDownloadRoot>
+                    <!--since pom is not in the same directory as package-lock.json-->
+                    <workingDirectory>vsa-ui</workingDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>install node and npm</id>
+                        <goals>
+                            <goal>install-node-and-npm</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                    </execution>
+                    <execution>
+                        <id>npm install</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>install</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>npm build</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <arguments>run-script build</arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
